@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <button class="sidebar-btn" onclick="automode()">Auto</button>
+            <button class="sidebar-btn" onclick="showManual()">Manual</button>
+            <button class="sidebar-btn" onclick="showTrend()">Trend</button>
+            <button class="sidebar-btn">Set weight</button>
+            <button class="sidebar-btn" onclick="showRecipeList()">Recipe</button>
+            <button class="sidebar-btn" id="start-button" onclick="start()" disabled>Start</button>
+            <button class="sidebar-btn" id="reset-button" onclick="reset()" disabled>Reset</button>
+            <button class="sidebar-btn" id="stop-button" onclick="stop()" disabled>Estop</button>
+            <button onclick="location.href='/';" class="sidebar-btn">Back</button>
+        </div> 
+
+        <!-- Content Area 1 -->
+        <div id="content-1" class="content-area content-1">
+            <div class="trend-charts">
+                <canvas id="trendChart1" width="300" height="150"></canvas>
+                <canvas id="trendChart2" width="300" height="150"></canvas>
+            </div>
+        </div>
+
+        <!-- Main Area -->
+        <div class="main-area">
+            <div class="image-container">
+                <!-- Hình nền -->
+                <img src="/images/all.png" alt="Background Image" class="background-image">
+            
+                <!-- Hình van -->
+                <img src="/images/valve.png" alt="Valve" class="valve-image" style="top: 51%; left: 44.2%;">
+                <img src="/images/valve.png" alt="Valve" class="valve-image" style="top: 51%; left: 52%;">
+                <img src="/images/valve.png" alt="Valve" class="valve-image" style="top: 51%; left: 22.6%;">
+                <img src="/images/valve.png" alt="Valve" class="valve-image" style="top: 33%; left: 29.4%;">
+                <img src="/images/valve.png" alt="Valve" class="valve-image" style="top: 33%; left: 22.6%;">
+                <img src="/images/valve.png" alt="Valve" class="valve-image" style="top: 33%; left: 15.8%;">
+                <img src="/images/MotorL.png" alt="Valve" class="motor-image" style="top: 2%; left: 8%;">
+                <img src="/images/MotorL.png" alt="Valve" class="motor-image" style="top: 7%; left: 8%;">
+                <img src="/images/MotorR.png" alt="Valve" class="motor-image" style="top: 2%; left: 90%;">
+                <img src="/images/MotorR.png" alt="Valve" class="motor-image" style="top: 7%; left: 90%;">
+                
+                <div id="scale-left" class="scale-value" style="top: 30%; left: 45%;">0.000</div>
+                <div id="scale-right" class="scale-value" style="top: 30%; left: 52.7%;">0.000</div>
+                <div id="PG-scale-right" class="scale-value" style="top: 42%; left: 23.5%;">0.000</div>
+            </div>
+        </div>
+
+        <!-- Content Areas below -->
+        <div class="content-area content-2">
+            <div id="log-container" class="log-container"></div>
+        </div>
+        <div class="content-area content-3">
+            <div class="recipe-container">
+                <div class="recipe-column">
+                    <table>
+                        <tr><td>Mixing time ref</td><td>0.000</td></tr>
+                        <tr><td>Mixing time actual</td><td>0.000</td></tr>
+                        <tr><td>Water ref</td><td>0.000</td></tr>
+                        <tr><td>Water actual</td><td>0.000</td></tr>
+                    </table>
+                </div>
+
+                <div class="recipe-column">
+                    <table>
+                        <tr><td>Mixing time ref</td><td>0.000</td></tr>
+                        <tr><td>Mixing time actual</td><td>0.000</td></tr>
+                        <tr><td>Water ref</td><td>0.000</td></tr>
+                        <tr><td>Water actual</td><td>0.000</td></tr>
+                        <tr><td>Water ref</td><td>0.000</td></tr>
+                        <tr><td>Water actual</td><td>0.000</td></tr>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+        <div class="content-area content-4">
+            <!--<div id="content-4" class="content-area content-4"> -->
+                <div class="recipe-container">
+                    <!-- Cột Công thức hiện tại -->
+                    <div class="recipe-column">
+                        <div class="recipe-header">
+                            <h4>CÔNG THỨC HIỆN TẠI:</h4>
+                            <span id="current-recipe-id">0</span>
+                        </div>
+                        <table>
+                            <tr><td>Xi măng</td><td id="current-cement">0.000</td></tr>
+                            <tr><td>Cát</td><td id="current-sand">0.000</td></tr>
+                            <tr><td>Khoáng</td><td id="current-mineral">0.000</td></tr>
+                            <tr><td>Tro bay</td><td id="current-flyash">0.000</td></tr>
+                            <tr><td>Phụ gia 1</td><td id="current-additive1">0.000</td></tr>
+                            <tr><td>Phụ gia 2</td><td id="current-additive2">0.000</td></tr>
+                            <tr><td>Phụ gia 3</td><td id="current-additive3">0.000</td></tr>
+                        </table>
+                    </div>
+            
+                    <!-- Cột Giá trị thực tế -->
+                    <div class="recipe-column">
+                        <div class="recipe-header">
+                            <h4>GIÁ TRỊ THỰC TẾ:</h4>
+                        </div>
+                        <table>
+                            <tr><td>Xi măng</td><td id="actual-cement">0.000</td></tr>
+                            <tr><td>Cát</td><td id="actual-sand">0.000</td></tr>
+                            <tr><td>Khoáng</td><td id="actual-mineral">0.000</td></tr>
+                            <tr><td>Tro bay</td><td id="actual-flyash">0.000</td></tr>
+                            <tr><td>Phụ gia 1</td><td id="actual-additive1">0.000</td></tr>
+                            <tr><td>Phụ gia 2</td><td id="actual-additive2">0.000</td></tr>
+                            <tr><td>Phụ gia 3</td><td id="actual-additive3">0.000</td></tr>
+                        </table>
+                    </div>
+                </div>
+            <!-- </div> -->
+        </div>
+    </div>
+
+    <!-- Popup Xác nhận -->
+    <div id="delete-confirmation" class="popup" style="display: none;">
+        <div class="popup-content">
+            <h3>Are you sure to delete this recipe?</h3>
+            <div class="popup-buttons">
+                <button id="confirm-delete" class="popup-btn">Yes</button>
+                <button id="cancel-delete" class="popup-btn">No</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function automode() {
+            // Thực hiện các thao tác khi chế độ tự động được chọn
+            logMessage("Auto mode selected.");
+            writeplcdata(["Auto","Manual"],[true,false]);
+        }
+
+        function showTrend() {
+            const content1 = document.getElementById("content-1");
+            content1.innerHTML = `
+                <div class="trend-charts">
+                    <canvas id="trendChart1" width="400" height="200"></canvas>
+                    <canvas id="trendChart2" width="400" height="200"></canvas>
+                </div>
+            `;
+
+            // Biểu đồ 1: Hiệu suất
+            const ctx1 = document.getElementById('trendChart1').getContext('2d');
+            new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['10:00', '10:05', '10:10', '10:15', '10:20', '10:25'],
+                    datasets: [{
+                        label: 'Cement Screw Speed (rpm)',
+                        data: [100, 105, 98, 110, 115, 120],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: 'top' }
+                    },
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Biểu đồ 2: Lượng nguyên liệu
+            const ctx2 = document.getElementById('trendChart2').getContext('2d');
+            new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: ['10:00', '10:05', '10:10', '10:15', '10:20', '10:25'],
+                    datasets: [{
+                        label: 'Cement (kg)',
+                        data: [500, 520, 510, 530, 540, 550],
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Sand (kg)',
+                        data: [300, 310, 320, 300, 290, 280],
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'flyash (kg)',
+                        data: [400, 380, 350, 410, 420, 390],
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: 'top' }
+                    },
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function showManual() {
+            logMessage("Manual mode selected.");
+            writeplcdata(["Manual","Auto"],[true,false]);
+
+            const content1 = document.getElementById("content-1");
+
+            // Danh sách các nút và tag PLC tương ứng
+            const buttonTasks = [
+                { name: "Cement Screw", tag: "Cement_Screw" },
+                { name: "Fly Ash Screw", tag: "Flyash_Screw" },
+                { name: "Sand Screw", tag: "Sand_Screw" },
+                { name: "Mineral Screw", tag: "Mineral_Screw" },
+                { name: "Mixer", tag: "Mixer" },
+                { name: "Conveyor Chute", tag: "Conveyor_Chute" },
+                { name: "Hopper Valve PG 1", tag: "Hopper_PG1" },
+                { name: "Hopper Valve PG 2", tag: "Hopper_PG2" },
+                { name: "Hopper Valve PG 3", tag: "Hopper_PG3" },
+                { name: "PG Scale Valve", tag: "PG_Scale_Valve" },
+                { name: "Sand Scale Valve", tag: "Sand_Scale_Valve" },
+                { name: "Mineral Ash Valve", tag: "Mineral_Ash_Valve" },
+                { name: "Mixer Valve Open", tag: "Mixer_Valve_Open" },
+                { name: "Mixer Valve Close", tag: "Mixer_Valve_Close" },
+                { name: "Sand Valve Vibrator", tag: "Sand_Valve_Vibrator" },
+                { name: "PG Ash Valve Vibrator", tag: "PG_Ash_Valve_Vibrator" }
+            ];
+
+            // Tạo HTML cho các nút
+            content1.innerHTML = `
+                <div class="manual-grid">
+                    ${buttonTasks.map(task => `
+                        <button 
+                            class="manual-btn on" 
+                            data-tag="${task.tag}" 
+                            onclick="handleManualButtonClick('${task.tag}', this)">
+                            ${task.name}
+                        </button>
+                    `).join("")}
+                </div>
+            `;
+        }
+
+        function handleManualButtonClick(tag, button) {
+            // Kiểm tra trạng thái hiện tại của nút
+            const isOn = button.classList.contains('on'); // Kiểm tra xem nút có lớp 'on' hay không 
+
+            // Cập nhật giao diện nút
+            if (isOn) {
+                writeplcdata(tag, true);
+                button.classList.remove('on');
+                button.classList.add('off');
+                logMessage(`${tag} turned OFF.`);
+            } else {
+                writeplcdata(tag, false);
+                button.classList.remove('off');
+                button.classList.add('on');
+                logMessage(`${tag} turned ON.`);
+            }
+        }
+
+        function showRecipeList() {
+            const content1 = document.getElementById("content-1");
+
+            // Gửi yêu cầu lấy danh sách công thức
+            fetch('/readrecipelist', { method: 'POST' })
+                .then(response => response.json())
+                .then(recipes => {
+                    // Hiển thị danh sách công thức
+                    content1.innerHTML = `
+                        <div class="recipe-list">
+                            ${recipes
+                                .map(
+                                    recipe => `
+                                        <button class="recipe-btn" onclick="editRecipe(${recipe.id})">${recipe.name}</button>
+                                    `
+                                )
+                                .join("")}
+                            ${recipes.length < 12
+                                ? `<button class="recipe-btn add-recipe-btn" onclick="addNewRecipe()">+</button>`
+                                : ""}
+                        </div>
+                    `;
+                })
+                .catch(err => {
+                    console.error('Lỗi khi lấy danh sách công thức:', err);
+                    content1.innerHTML = `<p class="error">Không thể lấy danh sách công thức!</p>`;
+                });
+        }
+
+
+
+        function editRecipe(recipeId) {
+            fetch(`/readrecipelist`, { method: 'POST' })
+                .then(response => response.json())
+                .then(recipes => {
+                    const recipe = recipes.find(r => r.id === recipeId);
+
+                    if (!recipe) {
+                        alert('Không tìm thấy công thức!');
+                        return;
+                    }
+
+                    const content1 = document.getElementById("content-1");
+                    content1.innerHTML = `
+                        <div class="recipe-form">
+                            <h3>Chỉnh sửa công thức</h3>
+                            <div class="input-group">
+                                <label for="recipe-name">Tên công thức:</label>
+                                <input type="text" id="recipe-name" value="${recipe.name}" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="batch_number">Num of batch:</label>
+                                <input type="number" id="batch_number" value="${recipe.batch_number}" min="0" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="total_weight">Total weight:</label>
+                                <input type="number" id="total_weight" value="${recipe.total_weight}" min="0" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="cement">Xi măng (%):</label>
+                                <input type="number" id="cement" value="${recipe.cement}" min="0" max="100" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="sand">Cát (%):</label>
+                                <input type="number" id="sand" value="${recipe.sand}" min="0" max="100" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="mineral">Khoáng (%):</label>
+                                <input type="number" id="mineral" value="${recipe.mineral}" min="0" max="100" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="flyash">Tro bay (%):</label>
+                                <input type="number" id="flyash" value="${recipe.flyash}" min="0" max="100" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="additive1">Phụ gia 1 (kg):</label>
+                                <input type="number" id="additive1" value="${recipe.additive1}" min="0" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="additive2">Phụ gia 2 (kg):</label>
+                                <input type="number" id="additive2" value="${recipe.additive2}" min="0" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="additive3">Phụ gia 3 (kg):</label>
+                                <input type="number" id="additive3" value="${recipe.additive3}" min="0" required>
+                            </div>
+                            <div class"manual-grid">
+                                <button type="button" onclick="saveRecipe(${recipe.recipe-name})">Update</button>
+                                <button type="button" onclick="deleteRecipeConfirmation('${recipe.name}')">Delete</button>
+                                <button type="button" onclick="showRecipeList()">Back</button>
+                                <button type="button" onclick="applyRecipe()">Apply</button>
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(err => console.error('Lỗi khi lấy thông tin công thức:', err));
+        }
+
+        function addNewRecipe() {
+            const content1 = document.getElementById("content-1");
+            content1.innerHTML = `
+                <div class="recipe-form">
+                    <h3>Thêm công thức mới</h3>
+                    <div class="input-group">
+                        <label for="recipe-name">Tên công thức:</label>
+                        <input type="text" id="recipe-name" placeholder="Nhập tên công thức" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="batch_number">Num of batch:</label>
+                        <input type="number" id="batch_number" placeholder="Enter num of batch" min="0" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="total_weight">Total weight:</label>
+                        <input type="number" id="total_weight" placeholder="Enter the total weight" min="0" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="cement">Xi măng (%):</label>
+                        <input type="number" id="cement" placeholder="Nhập % xi măng" min="0" max="100" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="sand">Cát (%):</label>
+                        <input type="number" id="sand" placeholder="Nhập % cát" min="0" max="100" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="mineral">Khoáng (%):</label>
+                        <input type="number" id="mineral" placeholder="Nhập % khoáng" min="0" max="100" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="flyash">Tro bay (%):</label>
+                        <input type="number" id="flyash" placeholder="Nhập % tro bay" min="0" max="100" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="additive1">Phụ gia 1 (kg):</label>
+                        <input type="number" id="additive1" placeholder="Nhập phụ gia 1" min="0" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="additive2">Phụ gia 2 (kg):</label>
+                        <input type="number" id="additive2" placeholder="Nhập phụ gia 2" min="0" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="additive3">Phụ gia 3 (kg):</label>
+                        <input type="number" id="additive3" placeholder="Nhập phụ gia 3" min="0" required>
+                    </div>
+                    <button type="button" onclick="saveNewRecipe()">Lưu công thức</button>
+                </div>
+            `;
+        }
+
+        function saveNewRecipe() {
+            const name = document.getElementById('recipe-name').value;
+            const cement = document.getElementById('cement').value;
+            const sand = document.getElementById('sand').value;
+            const mineral = document.getElementById('mineral').value;
+            const flyash = document.getElementById('flyash').value;
+            const additive1 = document.getElementById('additive1').value;
+            const additive2 = document.getElementById('additive2').value;
+            const additive3 = document.getElementById('additive3').value;
+            const batch_number = document.getElementById('batch_number').value;
+            const total_weight = document.getElementById('total_weight').value;
+
+            const recipe = { name, cement, sand, mineral, flyash, additive1, additive2, additive3 , total_weight, batch_number};
+            logMessage("New recipe saved successfully.");
+            console.log("Dữ liệu gửi lên server:", recipe);
+            fetch('/addrecipe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(recipe),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    showRecipeList(); // Hiển thị lại danh sách công thức
+                })
+                .catch(err => console.error('Lỗi khi thêm công thức:', err));
+        }
+
+        let recipeNameToDelete = "";
+
+        function deleteRecipeConfirmation(recipeName) {
+            recipeNameToDelete = recipeName; // Lưu tên công thức
+            const popup = document.getElementById('delete-confirmation');
+            popup.style.display = 'flex'; // Hiển thị popup
+        }
+
+        document.getElementById('confirm-delete').addEventListener('click', () => {
+            // Xóa công thức sau khi xác nhận
+            deleteRecipe(recipeNameToDelete);
+            document.getElementById('delete-confirmation').style.display = 'none'; // Đóng popup
+        });
+
+        document.getElementById('cancel-delete').addEventListener('click', () => {
+            // Hủy xóa và đóng popup
+            document.getElementById('delete-confirmation').style.display = 'none';
+        });
+
+        function deleteRecipe(recipe_name) {
+
+            // Kiểm tra nếu tên công thức không hợp lệ
+            if (!recipe_name) {
+                alert('Tên công thức không hợp lệ! Vui lòng kiểm tra lại.');
+                return;
+            }
+
+            fetch('/deleteRecipe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: recipe_name }), // Gửi trường "name" đúng với API
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Lỗi trong quá trình xóa công thức.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message); // Hiển thị thông báo thành công
+                    showRecipeList(); // Hiển thị lại danh sách công thức
+                })
+                .catch(err => console.error('Lỗi khi xóa công thức:', err));
+        }
+
+        function applyRecipe() {
+            // Lấy giá trị từ các trường nhập liệu
+            const total_weight = document.getElementById('total_weight').value || "0.000";
+            const cement = document.getElementById('cement').value * total_weight /100 || "0.000";
+            const sand = document.getElementById('sand').value * total_weight /100 || "0.000";
+            const mineral = document.getElementById('mineral').value* total_weight /100 || "0.000";
+            const flyash = document.getElementById('flyash').value* total_weight /100 || "0.000";
+            const additive1 = document.getElementById('additive1').value || "0.000";
+            const additive2 = document.getElementById('additive2').value || "0.000";
+            const additive3 = document.getElementById('additive3').value || "0.000";
+
+            // Cập nhật bảng "Công thức hiện tại"
+            document.getElementById('current-cement').textContent = parseFloat(cement).toFixed(3);
+            document.getElementById('current-sand').textContent = parseFloat(sand).toFixed(3);
+            document.getElementById('current-mineral').textContent = parseFloat(mineral).toFixed(3);
+            document.getElementById('current-flyash').textContent = parseFloat(flyash).toFixed(3);
+            document.getElementById('current-additive1').textContent = parseFloat(additive1).toFixed(3);
+            document.getElementById('current-additive2').textContent = parseFloat(additive2).toFixed(3);
+            document.getElementById('current-additive3').textContent = parseFloat(additive3).toFixed(3);
+
+            const startButton = document.getElementById('start-button');
+            startButton.disabled = false;
+
+            // Thông báo cập nhật thành công
+            logMessage("Recipe values applied successfully!");
+        }
+        // Hàm xử lý sự kiện khi người dùng nhấn nút "Lưu"
+
+        function writeplcdata(tag, value) {
+            fetch('/writeplcdata', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tag: tag, value: value }) // Sử dụng tag PLC
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); // Hiển thị thông báo phản hồi
+            })
+            .catch(err => {
+                console.error('Error while writting data:', err);
+            });
+        }
+
+        function updateActualValues() {
+            // Các tag cần đọc
+            // const tags = {
+            //     cement: "Cement_Value",
+            //     sand: "Sand_Value",
+            //     mineral: "Mineral_Value",
+            //     flyash: "Flyash_Value",
+            //     additive1: "Additive1_Value",
+            //     additive2: "Additive2_Value",
+            //     additive3: "Additive3_Value"
+            // };
+
+            // Lặp qua các tag để đọc giá trị
+            // Object.keys(tags).forEach(key => {
+            //     fetch('/readPLCValueByTag', {
+            //         method: 'POST',
+            //         headers: { 'Content-Type': 'application/json' },
+            //         body: JSON.stringify({ tag: tags[key] })
+            //     })
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         if (data.value !== undefined) {
+            //             // Cập nhật giá trị vào bảng "Giá trị thực tế"
+            //             const cell = document.getElementById(`actual-${key}`);
+            //             cell.textContent = parseFloat(data.value).toFixed(3);
+            //         } else {
+            //             console.error(`Lỗi khi đọc giá trị từ tag "${tags[key]}":`, data.error);
+            //         }
+            //     })
+            //     .catch(err => console.error(`Lỗi khi gọi API cho tag "${tags[key]}":`, err));
+            // });
+        }
+
+        // Gọi hàm mỗi giây để cập nhật bảng
+        setInterval(updateActualValues, 5000);
+
+        function start() {
+            // Lấy giá trị từ bảng "Công thức hiện tại"
+            const total_weight = parseFloat(document.getElementById('total_weight').value) || 0;
+            const batch_ref = parseFloat(document.getElementById('batch_number').value) || 0;
+            const cement = parseFloat(document.getElementById('cement').textContent) || 0;
+            const sand = parseFloat(document.getElementById('sand').textContent) || 0;
+            const mineral = parseFloat(document.getElementById('mineral').textContent) || 0;
+            const flyash = parseFloat(document.getElementById('flyash').textContent) || 0;
+            const additive1 = parseFloat(document.getElementById('additive1').textContent) || 0;
+            const additive2 = parseFloat(document.getElementById('additive2').textContent) || 0;
+            const additive3 = parseFloat(document.getElementById('additive3').textContent) || 0;
+
+            tag = ['Total_Weight','Batch_ref','Cement_ref','Sand_ref','Mineral_ref','Flyash_ref','PG01_ref','PG02_ref','PG03_ref','Start','Stop'];
+            value = [total_weight,batch_ref,cement,sand,mineral,flyash,additive1,additive2,additive3,true,false];
+            
+            fetch('/writemutilplcdata', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tag: tag, value: value }) // Sử dụng tag PLC
+            })
+            .then(response => response.json())
+            .then(data => {
+                logMessage("System started: " + data.message);
+                 // Thay đổi trạng thái của nút "Start" và "Stop"
+                const stopButton = document.getElementById('stop-button');
+                stopButton.disabled = false;
+                const startButton = document.getElementById('start-button');
+                startButton.disabled = true;
+            })
+            .catch(err => {
+                console.error('Lỗi khi gửi dữ liệu xuống PLC:', err);
+                logMessage('Error starting system.', 1); // Log lỗi với màu đỏ
+            });            
+        }
+
+        function stop() {
+            // Thực hiện các thao tác dừng hệ thống ở đây
+            writeplcdata('Stop', true);
+            const stopButton = document.getElementById('stop-button');
+            stoptButton.disabled = true;
+            logMessage("System stopped.");
+        }
+
+        function reset() {
+            // Thực hiện các thao tác reset hệ thống ở đây
+            logMessage("System reset.");
+        }
+
+        function getCurrentTime() {
+            const now = new Date();
+            const date = now.toLocaleDateString(); // Lấy ngày (định dạng: dd/mm/yyyy hoặc mm/dd/yyyy)
+            const time = now.toLocaleTimeString(); // Lấy giờ (định dạng: hh:mm:ss)
+            return `${date} ${time}`; // Kết hợp ngày và giờ
+        }
+
+        function logMessage(message, isError = 0) {
+            const logContainer = document.getElementById("log-container");
+
+            // Lấy thời gian hiện tại
+            const timestamp = getCurrentTime();
+
+            // Tạo nội dung log mới
+            const logEntry = document.createElement("div");
+            logEntry.textContent = `[${timestamp}] ${message}`;
+
+            if (isError === 1) {
+                logEntry.style.color = "red"; // Màu đỏ cho lỗi
+            } else {
+                logEntry.style.color = "black"; // Màu đen mặc định
+            }
+            logContainer.appendChild(logEntry);
+
+            // Tự động cuộn xuống cuối khung log
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>
