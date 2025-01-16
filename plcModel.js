@@ -22,7 +22,6 @@ const variables = {
     PG01_Value: 'DB2,REAL72',   // Đọc mức PG1
     PG02_Value: 'DB2,REAL76',   // Đọc mức PG2
     PG03_Value: 'DB2,REAL80',   // Đọc mức PG3
-    //
     Cement_Screw: 'DB1,X0.3', // Điều khiển vít xi măng
     Sand_Screw: 'DB1,X0.4',   // Điều khiển vít cát
     Flyash_Screw: 'DB1,X0.5', // Điều khiển vít tro bay
@@ -73,37 +72,19 @@ async function connectPLC() {
 }
 
 // Đọc dữ liệu từ PLC
-function readPLCData() {
-    
-    conn.readAllItems(function(anythingBad, values) {
-        if (anythingBad) {
-            console.log("SOMETHING WENT WRONG READING VALUES!!!!");
-        } else {
-            //console.log("Dữ liệu đọc được từ PLC:", values);
-            return values;
-        }
-    });
-}
-
-function readSinglePLCData(tag, callback) {
-    // Kiểm tra xem tag có trong biến `variables_read` không
-    if (!variables_read[tag]) {
-        console.error(`Tag "${tag}" không tồn tại trong variables_read.`);
-        callback(new Error(`Tag "${tag}" không hợp lệ.`), null);
-        return;
-    }
-
-    // Cấu hình ánh xạ tag
-    conn.setTranslationCB((t) => variables_read[t]);
-
-    // Đọc giá trị từ tag
-    conn.addItems([tag]);
+function readPLCData(callback) {
+    const valuesArray = [];
     conn.readAllItems((error, values) => {
         if (error) {
             console.error("Lỗi khi đọc giá trị từ PLC:", error);
             callback(error, null);
         } else {
-            callback(null, values[tag]); // Trả về giá trị của tag
+            for (let key in values) {
+                if (values.hasOwnProperty(key)) {
+                    valuesArray.push(values[key]);
+                }
+            }
+            callback(null, valuesArray); // Trả về giá trị 
         }
     });
 }
@@ -124,7 +105,6 @@ function writePLCData(tag, value) {
 module.exports = {
     connectPLC,
     readPLCData,
-    readSinglePLCData,
     writePLCData,
 };
 

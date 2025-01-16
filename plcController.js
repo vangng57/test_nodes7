@@ -13,6 +13,7 @@ exports.connectPLC = async (req, res) => {
 
 // API: Đọc dữ liệu từ PLC
 exports.readPLCData = async (req, res) => {
+    
     try {
         const data = await new Promise((resolve, reject) => {
             plcModel.readPLCData(); // Đọc dữ liệu từ PLC
@@ -46,22 +47,15 @@ exports.writePLCData = async (req, res) => {
 };
 
 exports.readPLCValueByTag = (req, res) => {
-    const { tag } = req.body;
-
-    // Kiểm tra nếu tag không được truyền hoặc không hợp lệ
-    if (!tag) {
-        res.status(400).json({ error: 'Tag không được để trống!' });
-        return;
-    }
-
-    plcModel.readSinglePLCData(tag, (error, value) => {
+    plcModel.readPLCData((error, values) => {
         if (error) {
-            res.status(500).json({ error: `Không thể đọc giá trị từ tag "${tag}". Lỗi: ${error.message}` });
+            res.status(500).json({ error: `Không thể đọc giá trị từ PLC. Lỗi: ${error.message}` });
         } else {
-            res.json({ tag: tag, value: value });
+            res.json({ values: values });
         }
     });
 };
+
 
 exports.writeMultiplePLCData = async (req, res) => {
     const { tag, value } = req.body;

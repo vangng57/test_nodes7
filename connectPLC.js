@@ -21,7 +21,8 @@ var variables_read = {
     // Đầu ra PLC
     Van_PG01: 'DB1,X0.0',
     Van_PG02: 'DB1,X0.1',
-    Van_PG03: 'DB1,X0.2'
+    Van_PG03: 'DB1,X0.2',
+    Sand_value: 'DB2,REAL68'
     // Vit_Xi_DO: 'DB1,X0.3',
     // Vit_Tro_DO: 'DB1,X0.4',
     // Vit_Cat_DO: 'DB1,X0.5',
@@ -56,6 +57,7 @@ function readPLCdata() {
                 }
             }
             console.log("Read values:", valuesArray);
+            //console.log(values);
         }
     });
 }
@@ -77,8 +79,8 @@ async function writePLCdata(tag, value) {
 async function performOperations() {
     try {
         await readPLCdata();
-        await writePLCdata(['Van_PG01','Van_PG02'], [true,true]);
-        process.exit();
+        //await writePLCdata(['Van_PG01','Van_PG02'], [true,true]);
+        //process.exit();
     } catch (err) {
         console.error('Error during operations:', err);
     }

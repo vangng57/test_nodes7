@@ -543,35 +543,30 @@
 
         function updateActualValues() {
             // Các tag cần đọc
-            // const tags = {
-            //     cement: "Cement_Value",
-            //     sand: "Sand_Value",
-            //     mineral: "Mineral_Value",
-            //     flyash: "Flyash_Value",
-            //     additive1: "Additive1_Value",
-            //     additive2: "Additive2_Value",
-            //     additive3: "Additive3_Value"
-            // };
-
-            // Lặp qua các tag để đọc giá trị
-            // Object.keys(tags).forEach(key => {
-            //     fetch('/readPLCValueByTag', {
-            //         method: 'POST',
-            //         headers: { 'Content-Type': 'application/json' },
-            //         body: JSON.stringify({ tag: tags[key] })
-            //     })
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         if (data.value !== undefined) {
-            //             // Cập nhật giá trị vào bảng "Giá trị thực tế"
-            //             const cell = document.getElementById(`actual-${key}`);
-            //             cell.textContent = parseFloat(data.value).toFixed(3);
-            //         } else {
-            //             console.error(`Lỗi khi đọc giá trị từ tag "${tags[key]}":`, data.error);
-            //         }
-            //     })
-            //     .catch(err => console.error(`Lỗi khi gọi API cho tag "${tags[key]}":`, err));
-            // });
+            const tags = {
+                cement: "Cement_Value",
+                sand: "Sand_Value",
+                mineral: "Mineral_Value",
+                flyash: "Flyash_Value",
+                additive1: "Additive1_Value",
+                additive2: "Additive2_Value",
+                additive3: "Additive3_Value"
+            };
+            fetch('/readPLCValueByTag', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.values !== undefined) {
+                    // Cập nhật giá trị vào bảng "Giá trị thực tế"
+                    const cell = document.getElementById("Sand_Value");
+                    cell.textContent = parseFloat(data.values["Sand_Value"]).toFixed(3); // Đảm bảo logic giá trị đúng
+                } else {
+                    console.error(`Lỗi khi đọc giá trị từ PLC: `, data.error);
+                }
+            })
+            .catch(err => console.error('Lỗi khi gọi API đọc PLC:', err));
         }
 
         // Gọi hàm mỗi giây để cập nhật bảng
