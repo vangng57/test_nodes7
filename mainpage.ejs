@@ -560,7 +560,7 @@
             .then(data => {
                 if (data.values !== undefined) {
                     // Cập nhật giá trị vào bảng "Giá trị thực tế"
-                    const cell = document.getElementById("Sand_Value");
+                    const cell = document.getElementById("actual-sand");
                     cell.textContent = parseFloat(data.values["Sand_Value"]).toFixed(3); // Đảm bảo logic giá trị đúng
                 } else {
                     console.error(`Lỗi khi đọc giá trị từ PLC: `, data.error);

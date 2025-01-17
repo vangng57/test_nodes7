@@ -73,18 +73,12 @@ async function connectPLC() {
 
 // Đọc dữ liệu từ PLC
 function readPLCData(callback) {
-    const valuesArray = [];
     conn.readAllItems((error, values) => {
         if (error) {
             console.error("Lỗi khi đọc giá trị từ PLC:", error);
             callback(error, null);
         } else {
-            for (let key in values) {
-                if (values.hasOwnProperty(key)) {
-                    valuesArray.push(values[key]);
-                }
-            }
-            callback(null, valuesArray); // Trả về giá trị 
+            callback(null, values); // Trả về giá trị 
         }
     });
 }
